@@ -54,7 +54,11 @@ class ColorsTableSeeder extends Seeder
 
         // Insert data into the database
         foreach ($dataArray as $data) {
+            $data['created_at'] = now();
+            $data['updated_at'] = now();
+        
             DB::table('colors')->insert($data);
         }
+        
     }
 }
