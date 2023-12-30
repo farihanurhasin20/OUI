@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\account\AuthController;
 use App\Http\Controllers\merchant\MerchantAuthController;
+use App\Http\Controllers\merchant\ProductController;
 use App\Http\Controllers\merchant\VariatonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,22 +24,35 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //for user registration and login
 Route::group(['prefix' => 'account'], function () {
-    Route::post('/register',[AuthController::class,'register']);
+        Route::post('/register',[AuthController::class,'register']);
 });
 
 //for merchant registration and login
 Route::group(['prefix' => 'merchant'], function () {
-    Route::post('/register',[MerchantAuthController::class,'register']);
-    Route::post('/login',[MerchantAuthController::class,'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+        Route::post('/register',[MerchantAuthController::class,'register']);
+        Route::post('/login',[MerchantAuthController::class,'login']);
+        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+        // create product
+        Route::get('/products', [ProductController::class, 'index']);
+        Route::get('/products/{id}', [ProductController::class, 'show']);
+        Route::post('/products', [ProductController::class, 'store']);
+        Route::put('/products/{id}', [ProductController::class, 'update']);
+        Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 });
 
+//for merchant's product variation
 Route::group(['prefix' => 'variation'], function () {
-// color route
-Route::get('/colors', [VariatonController::class, 'color_index']);
-Route::get('/colors/{id}', [VariatonController::class, 'color_show']);
+        // color route
+        Route::get('/colors', [VariatonController::class, 'color_index']);
+        Route::get('/colors/{id}', [VariatonController::class, 'color_show']);
 
-// unit route
-Route::get('/units', [VariatonController::class, 'unit_index']);
-Route::get('/units/{id}', [VariatonController::class, 'unit_show']);
+        // unit route
+        Route::get('/units', [VariatonController::class, 'unit_index']);
+        Route::get('/units/{id}', [VariatonController::class, 'unit_show']);
 });
+
+
+
+
+
