@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\account\AuthController;
 use App\Http\Controllers\merchant\MerchantAuthController;
+use App\Http\Controllers\merchant\OrderController;
 use App\Http\Controllers\merchant\ProductController;
 use App\Http\Controllers\merchant\VariatonController;
 use Illuminate\Http\Request;
@@ -39,6 +40,12 @@ Route::group(['prefix' => 'merchant'], function () {
         Route::post('/products', [ProductController::class, 'store']);
         Route::put('/products/{id}', [ProductController::class, 'update']);
         Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+
+        //place order
+        Route::get('/orders', [OrderController::class, 'index']);
+        Route::get('/orders/{id}', [OrderController::class, 'show']);
+        Route::post('/orders', [OrderController::class, 'store']);
+        Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
 });
 
 //for merchant's product variation
