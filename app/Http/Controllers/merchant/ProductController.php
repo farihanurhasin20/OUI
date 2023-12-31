@@ -16,7 +16,10 @@ class ProductController extends Controller
 
     public function index()
 {
-    $products = Product::all();
+    $user = Auth::user();
+    
+    $products = Product::where('user_id', $user->id)->get();
+    
     return response()->json(['data' => $products], 200);
 }
 
