@@ -23,16 +23,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//for user registration and login
-Route::group(['prefix' => 'account'], function () {
-        Route::post('/register',[AuthController::class,'register']);
-});
 
 //for merchant registration and login
 Route::group(['prefix' => 'merchant'], function () {
         Route::post('/register',[MerchantAuthController::class,'register']);
         Route::post('/login',[MerchantAuthController::class,'login']);
-        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+        Route::post('/logout', [MerchantAuthController::class, 'logout'])->middleware('auth:sanctum');
 
         // create product
         Route::get('/products', [ProductController::class, 'index']);
