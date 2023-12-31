@@ -43,9 +43,8 @@ Route::group(['prefix' => 'merchant'], function () {
         Route::post('/orders', [OrderController::class, 'store']);
         Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
 
-        // New route for getting order history by date
-        Route::get('/order-history-by-date', [OrderController::class, 'getOrderHistoryByDate']);
-        Route::post('/order/history-by-date', [OrderController::class, 'getOrderHistoryByDate']);
+        // New route for getting order history
+        Route::post('/order-history', [OrderController::class, 'getOrderHistory']);
 });
 
 //for merchant's product variation

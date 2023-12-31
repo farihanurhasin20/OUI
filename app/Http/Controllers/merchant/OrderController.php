@@ -135,7 +135,7 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order deleted successfully']);
     }
 
-    public function getOrderHistoryByDate(Request $request)
+    public function getOrderHistory(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'year' => 'required|integer|min:1900',
