@@ -19,6 +19,9 @@ class OrderController extends Controller
         $formattedOrders = $orders->map(function ($order) {
             return [
                 'order' => $order,
+                'invoice_id' => $order->invoice_id,
+                'total_quantity' => $order->orderItems->sum('quantity'),
+                'total_amount' => $order->total_price,
                 // Add other fields as needed
             ];
         });
@@ -130,6 +133,50 @@ class OrderController extends Controller
         $order->delete();
 
         return response()->json(['message' => 'Order deleted successfully']);
+    }
+
+    public function getOrderHistoryByDate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'year' => 'required|integer|min:1900',
+            'month' => 'nullable|integer|between:1,12',
+            'day' => 'nullable|integer|between:1,31',
+            ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 400);
+        }
+
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $day = $request->input('day');
+
+        $query = Order::whereYear('created_at', $year);
+
+        if (!is_null($month)) {
+            $query->whereMonth('created_at', $month);
+        }
+
+        if (!is_null($day)) {
+            $query->whereDay('created_at', $day);
+        }
+
+        $orders = $query->orderBy('created_at')->get();
+
+        // Calculate total quantity, total price, and total orders
+        $totalQuantity = $orders->flatMap(function ($order) {
+            return $order->orderItems->pluck('quantity');
+        })->sum();
+
+        $totalPrice = $orders->sum('total_price');
+        $totalOrders = $orders->count();
+
+        return response()->json([
+            'data' => $orders,
+            'total_quantity' => $totalQuantity,
+            'total_price' => $totalPrice,
+            'total_orders' => $totalOrders,
+        ]);
     }
 
 }
