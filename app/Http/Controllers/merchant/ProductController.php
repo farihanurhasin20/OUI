@@ -73,7 +73,6 @@ class ProductController extends Controller
 
 public function update(Request $request, $id)
 {
-    dd($request->all(), $id);
     $product=Product::find($id);
     if (!$product) {
         return response()->json(['message' => 'Product not found'], 404);
@@ -96,8 +95,6 @@ public function update(Request $request, $id)
     }
     
     $productData = $request->all();
-
-    // dd($productData);
 
     // Process image if provided
     if ($request->hasFile('image')) {

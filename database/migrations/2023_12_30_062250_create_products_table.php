@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('barcode');
-            $table->string('qty');
+            $table->string('qty')->nullable();
             $table->string('size');
             $table->string('type');
             $table->string('price');
