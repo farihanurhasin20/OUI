@@ -32,7 +32,7 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::with('orderItems')->find($id);
-
+        
         if (!$order) {
             return response()->json(['error' => 'Order not found'], 404);
         }
@@ -40,11 +40,19 @@ class OrderController extends Controller
         return response()->json([
             'data' => [
                 'order' => $order,
+                'images' => $order->orderItems->map(function ($item) {
+                    return [
+                        'product_id' => $item->product_id,
+                        'title' => $item->product->title,
+                        'image' => $item->product->image, // Adjust this based on your actual image field
+                    ];
+                }),
                 'invoice_id' => $order->invoice_id,
                 'total_quantity' => $order->orderItems->sum('quantity'),
                 'total_amount' => $order->total_price,
             ],
         ]);
+        
     }
 
 
