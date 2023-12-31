@@ -31,6 +31,7 @@ Route::group(['prefix' => 'merchant'], function () {
         Route::post('/logout', [MerchantAuthController::class, 'logout'])->middleware('auth:sanctum');
 
         // create product
+        Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/products', [ProductController::class, 'index']);
         Route::get('/products/{id}', [ProductController::class, 'show']);
         Route::post('/products', [ProductController::class, 'store']);
@@ -45,6 +46,8 @@ Route::group(['prefix' => 'merchant'], function () {
 
         // New route for getting order history
         Route::post('/order-history', [OrderController::class, 'getOrderHistory']);
+});
+
 });
 
 //for merchant's product variation
