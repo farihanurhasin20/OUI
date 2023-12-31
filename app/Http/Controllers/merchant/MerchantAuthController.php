@@ -63,7 +63,7 @@ class MerchantAuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('MyApp')->plainTextToken;
 
-            return response()->json(['token' => $token, 'name' => $user->name, 'message' => 'Login successful'], 200);
+            return response()->json(['token' => $token, 'user_id' => $user->id, 'name' => $user->name, 'message' => 'Login successful'], 200);
         } else {
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
