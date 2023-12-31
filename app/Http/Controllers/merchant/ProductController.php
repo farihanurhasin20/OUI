@@ -7,6 +7,7 @@ use App\Models\Color;
 use App\Models\Product;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -64,6 +65,9 @@ class ProductController extends Controller
 
     }
 
+    $userId = Auth::id();
+    $productData['user_id'] = $userId;
+    
 
     $product = Product::create($productData);
 
