@@ -46,6 +46,7 @@ Route::group(['prefix' => 'merchant'], function () {
 
         // New route for getting order history
         Route::post('/order-history', [OrderController::class, 'getOrderHistory']);
+        Route::get('/order-today-history', [OrderController::class, 'getTodaysData']);
 });
 
 });
