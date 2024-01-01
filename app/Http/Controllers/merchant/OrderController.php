@@ -6,15 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::all();
+        $user = Auth::user();
+        $orders = Order::where('user_id', $user->id)->get();
+    
 
         $formattedOrders = $orders->map(function ($order) {
             return [
@@ -62,25 +66,30 @@ class OrderController extends Controller
         'user_id' => 'nullable|exists:users,id',
         'order_items' => 'required|array',
         'order_items.*.product_id' => 'required|exists:products,id',
-        'order_items.*.quantity' => 'required|integer|min:1',
+        'order_items.*.quantity' => 'nullable|integer|min:1',
+        'order_items.*.weight' => 'nullable|integer|min:1',
         ]);
     
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
-    
+        
+
         $data = $validator->validated();
         $orderAmount = 0;
-    
+
+        $user = Auth::user();
+        $data['user_id'] = $user->id;
+        // dd($data);
         foreach ($data['order_items'] as $item) {
             $product = Product::find($item['product_id']);
     
             $orderAmount += $product['price'] * $item['quantity'];
     
             // Check if there is enough stock before creating the order
-            if ($product['qty'] < $item['quantity']) {
-                return response()->json(['error' => 'Not enough stock for product ' . $product['name']], 400);
-            }
+            // if ($product['qty'] < $item['quantity']) {
+            //     return response()->json(['error' => 'Not enough stock for product ' . $product['name']], 400);
+            // }
             
         }
     
@@ -105,9 +114,10 @@ class OrderController extends Controller
             $orderItem = new OrderItem();
             $orderItem->product_id = $product['id'];
             $orderItem->quantity = $item['quantity'];
+            $orderItem->weight = $item['weight'];
             $orderItem->price = $product['price'];
-            $product->qty -= $item['quantity'];
-            $product->save();
+            // $product->qty -= $item['quantity'];
+            // $product->save();
             $order->orderItems()->save($orderItem);
         }
 
@@ -154,7 +164,6 @@ class OrderController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 400);
         }
-
         $year = $request->input('year');
         $month = $request->input('month');
         $day = $request->input('day');
@@ -172,6 +181,28 @@ class OrderController extends Controller
         $orders = $query->orderBy('created_at')->get();
 
         // Calculate total quantity, total price, and total orders
+        $totalQuantity = $orders->flatMap(function ($order) {
+            return $order->orderItems->pluck('quantity');
+        })->sum();
+
+        $totalPrice = $orders->sum('total_price');
+        $totalOrders = $orders->count();
+
+        return response()->json([
+            'data' => $orders,
+            'total_quantity' => $totalQuantity,
+            'total_price' => $totalPrice,
+            'total_orders' => $totalOrders,
+        ]);
+    }
+    public function getTodaysData(){
+        $today = Carbon::now()->toDateString();
+        $user = Auth::user();
+        
+        $orders = Order::whereDate('created_at', $today)
+                    ->where('user_id', $user->id)
+                    ->get();
+
         $totalQuantity = $orders->flatMap(function ($order) {
             return $order->orderItems->pluck('quantity');
         })->sum();
