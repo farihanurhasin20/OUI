@@ -68,6 +68,7 @@ class OrderController extends Controller
         'order_items.*.product_id' => 'required|exists:products,id',
         'order_items.*.quantity' => 'nullable|integer|min:1',
         'order_items.*.weight' => 'nullable|integer|min:1',
+        'order_items.*.price' => 'required|integer|min:1',
         ]);
     
         if ($validator->fails()) {
@@ -82,9 +83,10 @@ class OrderController extends Controller
         $data['user_id'] = $user->id;
         // dd($data);
         foreach ($data['order_items'] as $item) {
-            $product = Product::find($item['product_id']);
+            
+            // $product = Product::find($item['product_id']);
     
-            $orderAmount += $product['price'] * $item['quantity'];
+            $orderAmount += $item['price'] * $item['quantity'];
     
             // Check if there is enough stock before creating the order
             // if ($product['qty'] < $item['quantity']) {
@@ -106,6 +108,7 @@ class OrderController extends Controller
         $data['invoice_id'] = $invoiceId;
         $data['total_price'] = $totalAmount;
         $data['order_amount'] = $orderAmount;
+        
     
         $order = Order::create($data);
     
@@ -115,7 +118,8 @@ class OrderController extends Controller
             $orderItem->product_id = $product['id'];
             $orderItem->quantity = $item['quantity'];
             $orderItem->weight = $item['weight'];
-            $orderItem->price = $product['price'];
+            
+            $orderItem->price = $item['price'];
             // $product->qty -= $item['quantity'];
             // $product->save();
             $order->orderItems()->save($orderItem);
