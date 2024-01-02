@@ -92,7 +92,7 @@ public function update(Request $request, $id)
         'size' => 'nullable|string',
         'type' => 'nullable|string',
         'price' => 'required|string',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         'unit_id' => 'nullable|integer',
         'color_id' => 'nullable|integer',
     ]);
