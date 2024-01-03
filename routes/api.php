@@ -56,6 +56,9 @@ Route::group(['prefix' => 'variation'], function () {
         // color route
         Route::get('/colors', [VariatonController::class, 'color_index']);
         Route::get('/colors/{id}', [VariatonController::class, 'color_show']);
+        //category route
+        Route::get('/categories', [VariatonController::class, 'category_index']);
+        Route::get('/categories/{id}', [VariatonController::class, 'category_show']);
 
         // unit route
         Route::get('/units', [VariatonController::class, 'unit_index']);
