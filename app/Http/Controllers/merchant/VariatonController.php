@@ -5,6 +5,7 @@ namespace App\Http\Controllers\merchant;
 use App\Http\Controllers\Controller;
 use App\Models\Color;
 use App\Models\Unit;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 
@@ -44,5 +45,23 @@ class VariatonController extends Controller
         }
 
         return response()->json(['unit' => $unit], 200);
+    }
+
+    public function category_index()
+    {
+        $category = Category::all();
+
+        return response()->json($category, 200);
+    }
+
+    public function category_show($id)
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+
+        return response()->json(['category' => $category], 200);
     }
 }
